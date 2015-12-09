@@ -3,6 +3,7 @@ import luigi
 from NGS_process import *
 from Luigi_process import *
 
+
 #Launch bwa aln with luigi,
 #dependencies : LBwaAln
 class BwaAln(LBwaAln):
@@ -12,13 +13,15 @@ class BwaAln(LBwaAln):
 			LBwaIndex(self.genome)
 		else:
 			None
-			
+		
+
 #Launch bwa samse with luigi,
 #dependencies : LBwaSamse
 class BwaSamse(LBwaSamse):
 
 	def requires(self):
 		return BwaAln(self.sample,self.genome,self.sample_list)
+
 
 #Launch samtools view with luigi,
 #dependencies : LBwaSamse
@@ -30,6 +33,7 @@ class SamToBam(LSamtools_sam_to_bam):
 		else:
 			return {"samtools_index_ref":LSamtools_index_ref(self.genome),"bwa_sam":BwaSamse(self.sample,self.genome,self.sample_list)}
 
+
 #Launch samtools sort with luigi,
 #dependencies : LSamtools_sort_bam
 class SortBam(LSamtools_sort_bam):
@@ -38,6 +42,8 @@ class SortBam(LSamtools_sort_bam):
 		return SamToBam(self.sample,self.genome,self.sample_list)
 
 
+#Launch samtools merge with luigi
+#dependencies : LSamtools_merge_bam
 class MergeBam(LSamtools_merge_bam):
 
 	genome = luigi.Parameter() #Reference genome (.fa format) : use by self.requires()
@@ -46,11 +52,16 @@ class MergeBam(LSamtools_merge_bam):
 		return [SortBam(fastq_file,self.genome,[fastq_file]) for fastq_file in self.sample_list]
 
 
+#Launch samtools nodup with luigi
+#dependencies : LSamtools_remove_PCR_duplicate
 class RemovePCRDuplicate(LSamtools_remove_PCR_duplicate):
 
 	def requires(self):
 		return MergeBam(self.sample,self.sample_list,self.genome)
 	
+
+#Launch samtools index with luigi
+#dependencies : LSamtools_index_bam
 class IndexBam(LSamtools_index_bam):
 
 	def requires(self):
