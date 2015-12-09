@@ -20,7 +20,7 @@ class BwaAln(LBwaAln):
 class BwaSamse(LBwaSamse):
 
 	def requires(self):
-		return BwaAln(self.sample,self.genome,self.sample_list)
+		return BwaAln(self.sample,self.genome,[self.sample_list])
 
 
 #Launch samtools view with luigi,
@@ -29,7 +29,7 @@ class SamToBam(LSamtools_sam_to_bam):
 
 	def requires(self):
 		if self.is_indexing(self.genome):
-			return {"bwa_sam":BwaSamse(self.sample,self.genome,self.sample_list)}
+			return {"bwa_sam":BwaSamse(self.sample,self.genome,[self.sample_list])}
 		else:
 			return {"samtools_index_ref":LSamtools_index_ref(self.genome),"bwa_sam":BwaSamse(self.sample,self.genome,self.sample_list)}
 
@@ -39,7 +39,7 @@ class SamToBam(LSamtools_sam_to_bam):
 class SortBam(LSamtools_sort_bam):
 
 	def requires(self):
-		return SamToBam(self.sample,self.genome,self.sample_list)
+		return SamToBam(self.sample,self.genome,[self.sample_list])
 
 
 #Launch samtools merge with luigi
@@ -57,7 +57,7 @@ class MergeBam(LSamtools_merge_bam):
 class RemovePCRDuplicate(LSamtools_remove_PCR_duplicate):
 
 	def requires(self):
-		return MergeBam(self.sample,self.sample_list,self.genome)
+		return MergeBam(self.sample,[self.sample_list],self.genome)
 	
 
 #Launch samtools index with luigi
