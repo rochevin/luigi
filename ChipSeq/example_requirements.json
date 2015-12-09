@@ -1,0 +1,5 @@
+{
+	"final_sample_name":["B-U2OS-Tam"],
+	"sample_list":{"B-U2OS-Tam":["B-U2OS-Tam_CCGTCC_L005_R1_C4H12ACXX", "B-U2OS-Tam_CCGTCC_L005_R2_C4H12ACXX"]},
+	"genome":"female.hg19.fa"
+}
