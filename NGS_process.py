@@ -78,13 +78,15 @@ class BwaCommand(object):
 
 	def bwa_aln(self,sample_list,output,genome,threads = "2"):
 		"""Use BWA with bwa aln for fastq file(s)"""
-		return run_cmd(["bwa",
+		command = ["bwa",
 						"aln",
 						"-t",
 						threads,
 						"-f",
 						output,
-						genome]+list(sample_list)) if not exist(output) else None
+						genome]+list(sample_list)
+		print(command)
+		return run_cmd(command) if not exist(output) else None
 
 	def bwa_samse(self,sample_list,genome,file_input,file_output):
 		"""Use BWA with bwa samse for fastq file(s)"""
