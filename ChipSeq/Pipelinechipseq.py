@@ -3,7 +3,8 @@ import luigi
 from NGS_process import *
 from Luigi_process import *
 
-
+#Launch bwa aln with luigi,
+#dependencies : LBwaAln
 class BwaAln(LBwaAln):
 
 	def requires(self):
@@ -12,13 +13,15 @@ class BwaAln(LBwaAln):
 		else:
 			None
 			
-
+#Launch bwa samse with luigi,
+#dependencies : LBwaSamse
 class BwaSamse(LBwaSamse):
 
 	def requires(self):
 		return BwaAln(self.sample,self.genome,self.sample_list)
 
-
+#Launch samtools view with luigi,
+#dependencies : LBwaSamse
 class SamToBam(LSamtools_sam_to_bam):
 
 	def requires(self):
@@ -27,6 +30,8 @@ class SamToBam(LSamtools_sam_to_bam):
 		else:
 			return {"samtools_index_ref":LSamtools_index_ref(self.genome),"bwa_sam":BwaSamse(self.sample,self.genome,self.sample_list)}
 
+#Launch samtools sort with luigi,
+#dependencies : LSamtools_sort_bam
 class SortBam(LSamtools_sort_bam):
 
 	def requires(self):
