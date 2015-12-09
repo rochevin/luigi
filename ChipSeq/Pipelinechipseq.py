@@ -65,7 +65,7 @@ class RemovePCRDuplicate(LSamtools_remove_PCR_duplicate):
 class IndexBam(LSamtools_index_bam):
 
 	def requires(self):
-		return RemovePCRDuplicate(self.sample,self.genome,self.sample_list)
+		return RemovePCRDuplicate(self.sample,self.genome,[self.sample_list])
 
 
 #Main class : Launch the pipeline
