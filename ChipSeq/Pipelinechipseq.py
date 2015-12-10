@@ -77,9 +77,10 @@ class ChipSeqProcess(luigi.Task):
 	#method : self.requires() method will be launch before self.run()
 	#Call LBwaSam before running self.run()
 	def requires(self):
-		requirements = json_read(self.file_requirement) 
+		requirements = json_read(self.file_requirement)
+		directory = requirements["directory"] 
 		final_samples_name = requirements["final_sample_name"]
-		sample_list = requirements["sample_list"]
+		sample_list = {key:os.path.join(directory[key],requirements["sample_list"][key]) for key in requirements["sample_list"].keys()}
 		genome = requirements["genome"]
 
 		return [IndexBam(sample,genome,sample_list[sample]) for sample in final_samples_name]
