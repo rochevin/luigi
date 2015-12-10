@@ -86,7 +86,7 @@ class BwaCommand(object):
 						"-f",
 						output,
 						genome]+fastq_list
-		print(command)
+		print(" ".join(command))
 		return run_cmd(command) if not exist(output) else None
 
 	def bwa_samse(self,fastq_list,genome,file_input,file_output):
