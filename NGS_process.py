@@ -109,7 +109,7 @@ class BwaCommand(object):
 						 "-f",
 						 file_output,
 						 genome
-						 ]+sai_list)+fastq_list) if not exist(file_output) else None
+						 ]+sai_list+fastq_list) if not exist(file_output) else None
 
 
 	def is_indexing(self,initial_file,extensions=[".amb",".ann",".bwt",".pac",".sa"]):
