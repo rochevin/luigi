@@ -21,6 +21,12 @@ def exist(file_name):
 	return os.path.isfile(file_name)
 
 
+##convert a string to a list
+def string_to_list(given_string):
+	liste = []
+	liste.append(given_string)
+	return liste
+
 ###All NGS python class
 
 ##class with all command for samtools
@@ -78,7 +84,7 @@ class BwaCommand(object):
 
 	def bwa_aln(self,fastq_list,output,genome,threads = "2"):
 		"""Use BWA with bwa aln for fastq file(s)"""
-		fastq_list = self.get_fastq_for_sample([fastq_list]) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
+		fastq_list = self.get_fastq_for_sample(string_to_list(fastq_list)) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
 		command = ["bwa",
 						"aln",
 						"-t",
@@ -91,7 +97,7 @@ class BwaCommand(object):
 
 	def bwa_samse(self,fastq_list,genome,file_input,file_output):
 		"""Use BWA with bwa samse for fastq file(s)"""
-		fastq_list = self.get_fastq_for_sample([fastq_list]) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
+		fastq_list = self.get_fastq_for_sample(string_to_list(fastq_list)) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
 		return run_cmd(["bwa",
 						 "samse",
 						 "-f",
@@ -102,8 +108,8 @@ class BwaCommand(object):
 
 	def bwa_sampe(self,sai_list,fastq_list,genome,file_output):
 		"""Use BWA with bwa sampe for 2 fastq files"""
-		sai_list = self.get_sai_for_sample([sai_list]) if type(sai_list) == "str" else self.get_sai_for_sample(list(sai_list))
-		fastq_list = self.get_fastq_for_sample([fastq_list]) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
+		sai_list = self.get_sai_for_sample(string_to_list(sai_list)) if type(sai_list) == "str" else self.get_sai_for_sample(list(sai_list))
+		fastq_list = self.get_fastq_for_sample(string_to_list(fastq_list)) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
 		return run_cmd(["bwa",
 						 "sampe",
 						 "-f",
