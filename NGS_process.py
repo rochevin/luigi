@@ -76,7 +76,7 @@ class BwaCommand(object):
 		return run_cmd(["bwa","index",genome]) if not self.is_indexing(genome) else None
 
 
-	def bwa_aln(self,sample_list,output,genome,threads = "2"):
+	def bwa_aln(self,fastq_list,output,genome,threads = "2"):
 		"""Use BWA with bwa aln for fastq file(s)"""
 		fastq_list = self.get_fastq_for_sample([fastq_list]) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
 		command = ["bwa",
