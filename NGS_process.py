@@ -78,34 +78,38 @@ class BwaCommand(object):
 
 	def bwa_aln(self,sample_list,output,genome,threads = "2"):
 		"""Use BWA with bwa aln for fastq file(s)"""
+		fastq_list = self.get_fastq_for_sample([fastq_list]) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
 		command = ["bwa",
 						"aln",
 						"-t",
 						threads,
 						"-f",
 						output,
-						genome]+list(sample_list)
+						genome]+fastq_list
 		print(command)
 		return run_cmd(command) if not exist(output) else None
 
-	def bwa_samse(self,sample_list,genome,file_input,file_output):
+	def bwa_samse(self,fastq_list,genome,file_input,file_output):
 		"""Use BWA with bwa samse for fastq file(s)"""
+		fastq_list = self.get_fastq_for_sample([fastq_list]) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
 		return run_cmd(["bwa",
 						 "samse",
 						 "-f",
 						 file_output,
 						 genome,
 						 file_input
-						 ]+list(sample_list)) if not exist(file_output) else None
+						 ]+fastq_list) if not exist(file_output) else None
 
 	def bwa_sampe(self,sai_list,fastq_list,genome,file_output):
 		"""Use BWA with bwa sampe for 2 fastq files"""
+		sai_list = self.get_sai_for_sample([sai_list]) if type(sai_list) == "str" else self.get_sai_for_sample(list(sai_list))
+		fastq_list = self.get_fastq_for_sample([fastq_list]) if type(fastq_list) == "str" else self.get_fastq_for_sample(list(fastq_list))
 		return run_cmd(["bwa",
 						 "sampe",
 						 "-f",
 						 file_output,
 						 genome
-						 ]+list(sai_list)+list(fastq_list)) if not exist(file_output) else None
+						 ]+sai_list)+fastq_list) if not exist(file_output) else None
 
 
 	def is_indexing(self,initial_file,extensions=[".amb",".ann",".bwt",".pac",".sa"]):

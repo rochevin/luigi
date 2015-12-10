@@ -58,7 +58,7 @@ class LBwaAln(luigi.Task,BwaCommand):
 	#method : running by defaut when LBwaAln is called by luigi.
 	#Call bwa_command from BwaAln class
 	def run(self):
-		tmp = self.bwa_aln(sample_list = self.get_fastq_for_sample(self.sample_list),output = self.output().path,genome = self.genome)
+		tmp = self.bwa_aln(fastq_list = self.sample_list,output = self.output().path,genome = self.genome)
 
 
 #Execute bwa aln with luigi
@@ -77,7 +77,7 @@ class LBwaSamse(luigi.Task,BwaCommand):
 	#method : running by defaut when LBwaSam is called by luigi.
 	#Call bwa_command from BwaSam class
 	def run(self):
-		tmp = self.bwa_samse(sample_list = self.get_fastq_for_sample(self.sample_list),genome = self.genome,file_input = self.input().path,file_output = self.output().path)
+		tmp = self.bwa_samse(fastq_list = self.sample_list,genome = self.genome,file_input = self.input().path,file_output = self.output().path)
 
 #Execute bwa aln with luigi
 #Dependencies : luigi, BwaSam(from NGS_process), LBwaCommand
@@ -95,7 +95,7 @@ class LBwaSampe(luigi.Task,BwaCommand):
 	#method : running by defaut when LBwaSam is called by luigi.
 	#Call bwa_command from BwaSam class
 	def run(self):
-		tmp = self.bwa_sampe(sai_list=self.get_sai_for_sample(sample_list),fastq_list=self.get_fastq_for_sample(sample_list),genome=self.genome,file_output=self.output().path)
+		tmp = self.bwa_sampe(sai_list=self.sample_list),fastq_list=self.sample_list,genome=self.genome,file_output=self.output().path)
 	
 #Execute samtools faidx with luigi
 #Dependencies : luigi, SamtoolsCommand(from NGS_process)		
