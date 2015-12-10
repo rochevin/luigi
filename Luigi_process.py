@@ -95,7 +95,7 @@ class LBwaSampe(luigi.Task,BwaCommand):
 	#method : running by defaut when LBwaSam is called by luigi.
 	#Call bwa_command from BwaSam class
 	def run(self):
-		tmp = self.bwa_sampe(sai_list=self.sample_list),fastq_list=self.sample_list,genome=self.genome,file_output=self.output().path)
+		tmp = self.bwa_sampe(sai_list=self.sample_list,fastq_list=self.sample_list,genome=self.genome,file_output=self.output().path)
 	
 #Execute samtools faidx with luigi
 #Dependencies : luigi, SamtoolsCommand(from NGS_process)		
