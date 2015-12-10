@@ -10,7 +10,7 @@ class BwaAln(LBwaAln):
 
 	def requires(self):
 		if not self.is_indexing(self.genome):
-			LBwaIndex(self.genome)
+			return LBwaIndex(self.genome)
 		else:
 			None
 		
