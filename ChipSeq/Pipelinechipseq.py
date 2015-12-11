@@ -77,13 +77,11 @@ class ChipSeqProcess(luigi.Task):
 	#method : self.requires() method will be launch before self.run()
 	#Call LBwaSam before running self.run()
 	def requires(self):
-		requirements = json_read(self.file_requirement)
-		directory = requirements["directory"] 
-		final_samples_name = requirements["final_sample_name"]
-		sample_list = {key:add_directory(directory[key],requirements["sample_list"][key]) for key in requirements["sample_list"].keys()}
-		genome = requirements["genome"]
+		requirements = read_conf(self.file_requirement)
+		final_samples_name = requirements["NAMES"]
+		genome = requirements["GENOME"][0] #Take only the first genome on the list
 
-		return [IndexBam(sample,genome,sample_list[sample]) for sample in final_samples_name]
+		return [IndexBam(sample,genome,requirements[sample]) for sample in final_samples_name]
 	#method : running by defaut when LBwaSam is called by luigi.
 	#Use just for launching pipeline, no need to execute anything
 	def run(self):
