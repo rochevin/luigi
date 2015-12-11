@@ -21,6 +21,10 @@ def exist(file_name):
 	return os.path.isfile(file_name)
 
 
+##add_directory to list
+def add_directory(directory,liste):
+	return [os.path.join(directory,elmt) for elmt in liste]
+
 ###All NGS python class
 
 ##class with all command for samtools
