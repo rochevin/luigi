@@ -24,11 +24,14 @@ def read_conf(file_name,main_opts=["GENOME","FASTQ","DIRECTORY"],sub_opt=["NAME"
 					if content and global_option in main_opts:
 						if global_option == "FASTQ" and name:
 							config[name] = content
+							content = [] if option == "NAME" else content
 						elif global_option == "GENOME":
 							config[global_option] = content
+							content = []
 						elif global_option == "DIRECTORY":
 							config[global_option] = content
-						content = [] if option == "NAME" else content
+							content = []
+						
 					result = line.replace("[","").replace("]","").split(":")
 					option = result[0].upper()
 					if option in main_opts:
@@ -116,30 +119,42 @@ class SamtoolsCommand(object):
 	-is_indexing : check if the given file is indexed given an extension"""
 	def samtools_index_ref(self,fasta):
 		"""Use samtools with samtools faidx"""
-		return run_cmd(["samtools","faidx",fasta]) if not self.is_indexing(fasta) else None
+		command = ["samtools","faidx",fasta]
+		print(" ".join(command))
+		return run_cmd(command) if not self.is_indexing(fasta) else None
 
 	def samtools_sam_to_bam(self,file_index,file_output,file_input,options = ["-b","-S","-q","25"]):
 		"""Use samtools with samtools view"""
-		return run_cmd(["samtools","view"]+options+["-t",file_index,"-o",file_output,file_input]) if not exist(file_output) else None
+		command = ["samtools","view"]+options+["-t",file_index,"-o",file_output,file_input]
+		print(" ".join(command))
+		return run_cmd(command) if not exist(file_output) else None
 
 	def samtools_sort_bam(self,bam_file,sorted_bam_file):
 		"""Use samtools with samtools sort"""
 		#check if the output file is without .bam extension (because samtools add the .bam automaticly for the output)
 		file_name, extension = os.path.splitext(sorted_bam_file)
 		good_output = sorted_bam_file if not extension else file_name
-		return run_cmd(["samtools","sort",bam_file,good_output]) if not exist(file_name+extension) else None
+		command = ["samtools","sort",bam_file,good_output]
+		print(" ".join(command))
+		return run_cmd(command) if not exist(file_name+extension) else None
 	
 	def samtools_remove_PCR_duplicate(self,bam_file,nodups_bam_file,opt="-s"):
 		"""Use samtools with samtools rmdups"""
-		return run_cmd(["samtools","rmdup",opt,bam_file,nodups_bam_file]) if not exist(nodups_bam_file) else None
+		command = ["samtools","rmdup",opt,bam_file,nodups_bam_file]
+		print(" ".join(command))
+		return run_cmd() if not exist(nodups_bam_file) else None
 
 	def samtools_index_bam(self,bam_file,index_bam_file):
 		"""Use samtools with samtools index"""
-		return run_cmd(["samtools","index",bam_file,index_bam_file]) if not exist(index_bam_file) else None
+		command = ["samtools","index",bam_file,index_bam_file]
+		print(" ".join(command))
+		return run_cmd(command) if not exist(index_bam_file) else None
 
 	def samtools_merge_bam(self,merged_bam_file,bam_list):
 		"""use samtools with samtools merge"""
-		return run_cmd(["samtools","merge",merged_bam_file]+list(bam_list))
+		command = ["samtools","merge",merged_bam_file]+list(bam_list)
+		print(" ".join(command))
+		return run_cmd(command)
 
 
 	def is_indexing(self,initial_file,extensions=[".fai"]):
@@ -154,7 +169,9 @@ class BwaCommand(object):
 	""""""
 	def bwa_index(self,genome):
 		"""Use BWA with bwa index to index fasta file"""
-		return run_cmd(["bwa","index",genome]) if not self.is_indexing(genome) else None
+		command = ["bwa","index",genome]
+		print(" ".join(command))
+		return run_cmd() if not self.is_indexing(genome) else None
 
 
 	def bwa_aln(self,fastq_list,output,genome,threads = "2"):
