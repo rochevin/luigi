@@ -105,6 +105,11 @@ def exist(file_name):
 def add_directory(directory,liste):
 	return [os.path.join(directory,elmt) for elmt in liste]
 
+##get path from a list of LocalTarget object
+
+def get_path(LocalTarget_list):
+	return [elmt.path for elmt in LocalTarget_list] if type(LocalTarget_list) == list else LocalTarget_list.path
+
 ###All NGS python class
 
 ##class with all command for samtools
@@ -142,11 +147,11 @@ class SamtoolsCommand(object):
 		"""Use samtools with samtools rmdups"""
 		command = ["samtools","rmdup",opt,bam_file,nodups_bam_file]
 		print(" ".join(command))
-		return run_cmd() if not exist(nodups_bam_file) else None
+		return run_cmd(command) if not exist(nodups_bam_file) else None
 
 	def samtools_index_bam(self,bam_file,index_bam_file):
 		"""Use samtools with samtools index"""
-		command = ["samtools","index",bam_file,index_bam_file]
+		command = ["samtools","index",bam_file]
 		print(" ".join(command))
 		return run_cmd(command) if not exist(index_bam_file) else None
 
@@ -156,6 +161,12 @@ class SamtoolsCommand(object):
 		print(" ".join(command))
 		return run_cmd(command)
 
+	def cp_bam_to_final_name(self,merged_bam_file,bam_list):
+		"""use cp command to copy the bam to the final name when bam_list == 1
+		use in remplacement to merge bam"""
+		command = ["cp"]+list(bam_list)+[merged_bam_file]
+		print(" ".join(command))
+		return run_cmd(command)
 
 	def is_indexing(self,initial_file,extensions=[".fai"]):
 		"""Check if the ref genome is indexed, defaut : [".fai"]"""
@@ -164,6 +175,8 @@ class SamtoolsCommand(object):
 
 	def bam_for_sample(self,sample_list):
 		return [sample+".bam" for sample in sample_list]
+
+
 
 class BwaCommand(object):
 	""""""

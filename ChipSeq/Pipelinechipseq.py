@@ -49,7 +49,7 @@ class MergeBam(LSamtools_merge_bam):
 	genome = luigi.Parameter() #Reference genome (.fa format) : use by self.requires()
 
 	def requires(self):
-		return [SortBam(fastq_file,self.genome,fastq_file) for fastq_file in self.sample_list]
+		return [SortBam(fastq_file,self.genome,fastq_file) for fastq_file in self.sample_list]  
 
 
 #Launch samtools nodup with luigi
@@ -79,7 +79,7 @@ class ChipSeqProcess(luigi.Task):
 	def requires(self):
 		requirements = read_conf(self.file_requirement)
 		final_samples_name = requirements["NAMES"]
-		genome = requirements["GENOME"][0] #Take only the first genome on the list
+		genome = requirements["GENOME"][0] #Take only the first genome on the list 
 
 		return [IndexBam(sample,genome,requirements[sample]) for sample in final_samples_name]
 	#method : running by defaut when LBwaSam is called by luigi.

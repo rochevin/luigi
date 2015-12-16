@@ -53,12 +53,17 @@ class LBwaAln(luigi.Task,BwaCommand):
 		
 	#method : give the output file after running the command self.run()
 	def output(self):
-		return luigi.LocalTarget("%s.sai" % self.sample)
+		if len(self.sample) == 1:
+			return luigi.LocalTarget("%s.sai" % self.sample)
+		else:
+			path = os.path.split(self.sample[0])[0]
+			merged = "_".join(os.path.split(elmt)[1] for elmt in self.sample) 
+			return luigi.LocalTarget("%s.sai" % os.path.join(path,merged))
 
 	#method : running by defaut when LBwaAln is called by luigi.
 	#Call bwa_command from BwaAln class
 	def run(self):
-		tmp = self.bwa_aln(fastq_list = self.sample_list,output = self.output().path,genome = self.genome)
+		tmp = self.bwa_aln(fastq_list = self.sample_list,output = get_path(self.output()),genome = self.genome)
 
 
 #Execute bwa aln with luigi
@@ -77,7 +82,7 @@ class LBwaSamse(luigi.Task,BwaCommand):
 	#method : running by defaut when LBwaSam is called by luigi.
 	#Call bwa_command from BwaSam class
 	def run(self):
-		tmp = self.bwa_samse(fastq_list = self.sample_list,genome = self.genome,file_input = self.input().path,file_output = self.output().path)
+		tmp = self.bwa_samse(fastq_list = self.sample_list,genome = self.genome,file_input = get_path(self.input()),file_output = get_path(self.output()))
 
 #Execute bwa aln with luigi
 #Dependencies : luigi, BwaSam(from NGS_process), LBwaCommand
@@ -95,7 +100,7 @@ class LBwaSampe(luigi.Task,BwaCommand):
 	#method : running by defaut when LBwaSam is called by luigi.
 	#Call bwa_command from BwaSam class
 	def run(self):
-		tmp = self.bwa_sampe(sai_list=self.sample_list,fastq_list=self.sample_list,genome=self.genome,file_output=self.output().path)
+		tmp = self.bwa_sampe(sai_list=self.sample_list,fastq_list=self.sample_list,genome=self.genome,file_output=get_path(self.output()))
 	
 #Execute samtools faidx with luigi
 #Dependencies : luigi, SamtoolsCommand(from NGS_process)		
@@ -134,7 +139,7 @@ class LSamtools_sam_to_bam(luigi.Task,SamtoolsCommand):
 	#method : running by defaut when LSamtools_sam_to_bam is called by luigi.
 	#Call samtools_sam_to_bam from SamtoolsCommand class
 	def run(self):
-		tmp = self.samtools_sam_to_bam(file_index = self.index_input().path,file_output = self.output().path,file_input = self.input()["bwa_sam"].path)
+		tmp = self.samtools_sam_to_bam(file_index = get_path(self.index_input()),file_output = get_path(self.output()),file_input = get_path(self.input()["bwa_sam"]))
 
 #Execute samtools sort with luigi
 #Dependencies : luigi, SamtoolsCommand(from NGS_process), LSamtools_sam_to_bam
@@ -151,7 +156,7 @@ class LSamtools_sort_bam(luigi.Task,SamtoolsCommand):
 	#method : running by defaut when LSamtools_sort_bam is called by luigi.
 	#Call samtools_sort_bam from SamtoolsCommand class
 	def run(self):
-		tmp = self.samtools_sort_bam(bam_file = self.input().path,sorted_bam_file = self.output().path)
+		tmp = self.samtools_sort_bam(bam_file = get_path(self.input()),sorted_bam_file = get_path(self.output()))
 
 
 #Execute samtools sort with luigi
@@ -169,7 +174,7 @@ class LSamtools_remove_PCR_duplicate(luigi.Task,SamtoolsCommand):
 	#method : running by defaut when LSamtools_remove_PCR_duplicate is called by luigi.
 	#Call samtools_remove_PCR_duplicate from SamtoolsCommand class
 	def run(self):
-		tmp = self.samtools_remove_PCR_duplicate(bam_file = self.input().path,nodups_bam_file = self.output().path)
+		tmp = self.samtools_remove_PCR_duplicate(bam_file = get_path(self.input()),nodups_bam_file = get_path(self.output()))
 
 #Execute samtools index with luigi
 #Dependencies : luigi, SamtoolsCommand(from NGS_process), LSamtools_sort_bam
@@ -181,12 +186,12 @@ class LSamtools_index_bam(luigi.Task,SamtoolsCommand):
 
 	#method : give the output file after running the command self.run()
 	def output(self):
-		return luigi.LocalTarget("%s.nodups.bam" % self.sample)
+		return luigi.LocalTarget("%s.bai" % get_path(self.input()))
 
 	#method : running by defaut when LSamtools_remove_PCR_duplicate is called by luigi.
 	#Call samtools_index_bam from SamtoolsCommand class
 	def run(self):
-		tmp = self.samtools_index_bam(bam_file = self.input().path,index_bam_file = self.output().path)
+		tmp = self.samtools_index_bam(bam_file = get_path(self.input()),index_bam_file = get_path(self.output()))
 
 class LSamtools_merge_bam(luigi.Task,SamtoolsCommand):
 	#args :
@@ -200,5 +205,6 @@ class LSamtools_merge_bam(luigi.Task,SamtoolsCommand):
 	#method : running by defaut when LSamtools_remove_PCR_duplicate is called by luigi.
 	#Call samtools_merge_bam from SamtoolsCommand class
 	def run(self):
-		tmp = self.samtools_merge_bam(merged_bam_file=self.output().path,bam_list=self.bam_for_sample(self.sample_list))
+		tmp = self.samtools_merge_bam(merged_bam_file=get_path(self.output()),bam_list=get_path(self.input())) if len(self.sample_list)>1 else self.cp_bam_to_final_name(merged_bam_file=get_path(self.output()),bam_list=get_path(self.input()))
+
 
