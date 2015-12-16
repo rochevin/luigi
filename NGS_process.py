@@ -184,7 +184,7 @@ class BwaCommand(object):
 		"""Use BWA with bwa index to index fasta file"""
 		command = ["bwa","index",genome]
 		print(" ".join(command))
-		return run_cmd() if not self.is_indexing(genome) else None
+		return run_cmd(command) if not self.is_indexing(genome) else None
 
 
 	def bwa_aln(self,fastq_list,output,genome,threads = "2"):
